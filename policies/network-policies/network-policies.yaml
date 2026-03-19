@@ -1,0 +1,97 @@
+apiVersion: v1
+items:
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-api-to-database","namespace":"trading-app"},"spec":{"egress":[{"ports":[{"port":5432,"protocol":"TCP"}],"to":[{"podSelector":{"matchLabels":{"app":"postgres"}}}]},{"ports":[{"port":53,"protocol":"UDP"}],"to":[{"namespaceSelector":{},"podSelector":{"matchLabels":{"k8s-app":"kube-dns"}}}]}],"podSelector":{"matchLabels":{"app":"trading-api"}},"policyTypes":["Egress"]}}
+    creationTimestamp: "2026-03-17T14:12:12Z"
+    generation: 1
+    name: allow-api-to-database
+    namespace: trading-app
+    resourceVersion: "1773756732016783014"
+    uid: 6cd9f32d-6baf-4d06-bb3b-2b52d7587e2c
+  spec:
+    egress:
+    - ports:
+      - port: 5432
+        protocol: TCP
+      to:
+      - podSelector:
+          matchLabels:
+            app: postgres
+    - ports:
+      - port: 53
+        protocol: UDP
+      to:
+      - namespaceSelector: {}
+        podSelector:
+          matchLabels:
+            k8s-app: kube-dns
+    podSelector:
+      matchLabels:
+        app: trading-api
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"allow-frontend-to-api","namespace":"trading-app"},"spec":{"ingress":[{"from":[{"podSelector":{"matchLabels":{"app":"frontend"}}}],"ports":[{"port":8080,"protocol":"TCP"}]}],"podSelector":{"matchLabels":{"app":"trading-api"}},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2026-03-17T14:12:11Z"
+    generation: 1
+    name: allow-frontend-to-api
+    namespace: trading-app
+    resourceVersion: "1773756731794255016"
+    uid: 5d2ebc01-0873-40a6-a922-a5d7dcf10862
+  spec:
+    ingress:
+    - from:
+      - podSelector:
+          matchLabels:
+            app: frontend
+      ports:
+      - port: 8080
+        protocol: TCP
+    podSelector:
+      matchLabels:
+        app: trading-api
+    policyTypes:
+    - Ingress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"default-deny-egress","namespace":"trading-app"},"spec":{"podSelector":{},"policyTypes":["Egress"]}}
+    creationTimestamp: "2026-03-17T14:12:03Z"
+    generation: 1
+    name: default-deny-egress
+    namespace: trading-app
+    resourceVersion: "1773756723668863001"
+    uid: f559ba18-8663-40d8-87b1-d2a6b0bc1cd6
+  spec:
+    podSelector: {}
+    policyTypes:
+    - Egress
+- apiVersion: networking.k8s.io/v1
+  kind: NetworkPolicy
+  metadata:
+    annotations:
+      kubectl.kubernetes.io/last-applied-configuration: |
+        {"apiVersion":"networking.k8s.io/v1","kind":"NetworkPolicy","metadata":{"annotations":{},"name":"default-deny-ingress","namespace":"trading-app"},"spec":{"podSelector":{},"policyTypes":["Ingress"]}}
+    creationTimestamp: "2026-03-17T14:12:02Z"
+    generation: 1
+    name: default-deny-ingress
+    namespace: trading-app
+    resourceVersion: "1773756723020127022"
+    uid: fed86420-3943-48d7-b277-365f8c544f3b
+  spec:
+    podSelector: {}
+    policyTypes:
+    - Ingress
+kind: List
+metadata:
+  resourceVersion: ""
