@@ -1,5 +1,3 @@
-# Kubernetes Security Hardening — GCP/GKE Portfolio Project
-...
 # 🔐 Kubernetes Security Hardening on GKE
 
 ![GCP](https://img.shields.io/badge/Google_Cloud-GKE-4285F4?style=flat&logo=googlecloud&logoColor=white)
@@ -7,9 +5,25 @@
 ![Trivy](https://img.shields.io/badge/Trivy-Vulnerability_Scanning-1904DA?style=flat&logo=aqua&logoColor=white)
 ![OPA](https://img.shields.io/badge/OPA_Gatekeeper-Policy_Enforcement-7B42BC?style=flat)
 ![Falco](https://img.shields.io/badge/Falco-Runtime_Security-00AEC7?style=flat)
+![CI](https://github.com/AurelienKumarathas/k8s-security-portfolio/actions/workflows/validate.yml/badge.svg)
 ![License](https://img.shields.io/badge/License-MIT-green?style=flat)
 
 > End-to-end Kubernetes security hardening project on GCP — covering vulnerability scanning, policy enforcement, runtime threat detection, network segmentation and RBAC auditing.
+
+---
+
+## 📊 CIS Kubernetes Benchmark Results
+
+| Metric | Before Hardening | After Hardening |
+|--------|:---------------:|:---------------:|
+| CIS Benchmark Non-Compliance | **38%** | **6%** |
+| Privileged containers blocked | ❌ No policy | ✅ OPA Gatekeeper enforced |
+| Root containers blocked | ❌ No policy | ✅ OPA Gatekeeper enforced |
+| Resource limits enforced | ❌ Not required | ✅ Constraint applied |
+| Network policies applied | ❌ Open pod-to-pod | ✅ Least-privilege segmentation |
+| RBAC audited | ❌ Not reviewed | ✅ Full export and review |
+| Runtime threat detection | ❌ None | ✅ Falco rules authored |
+| Container image CVEs (nginx:1.14.0) | **39 CRITICAL** | ✅ Flagged and documented |
 
 ---
 
@@ -39,8 +53,8 @@
 ## ⚡ Quick Start
 
 ```bash
-git clone https://github.com/AurelienKumarathas/k8s-security-lab.git
-cd k8s-security-lab
+git clone https://github.com/AurelienKumarathas/k8s-security-portfolio.git
+cd k8s-security-portfolio
 trivy image nginx:1.14.0
 kubectl apply -f policies/gatekeeper/
 kubectl apply -f policies/network-policies/
@@ -62,12 +76,14 @@ kubectl apply -f policies/rbac/
 ## 📁 Repo Structure
 
 ```
-k8s-security-lab/
+k8s-security-portfolio/
 ├── evidence/              # Trivy reports, SARIF, SBOM, Falco alerts
 ├── manifests-insecure/    # Intentionally vulnerable manifests for policy testing
 ├── policies/              # Gatekeeper, network policies, RBAC, Falco rules
 ├── screenshots/           # GCP Console and CLI evidence
-└── gatekeeper-library/    # OPA Gatekeeper policy library
+└── gatekeeper-library/    # OPA Gatekeeper constraint templates
+    ├── block-privileged-pods/
+    └── require-resource-limits/
 ```
 
 ---
@@ -114,5 +130,3 @@ Falco was deployed via Helm using the `modern_ebpf` driver. GKE's hardened Chrom
 ## 📄 License
 
 MIT — see [LICENSE](LICENSE) for details.
-
-
