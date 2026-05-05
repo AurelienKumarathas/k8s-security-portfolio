@@ -37,6 +37,14 @@
 |---|---|
 | ![Gatekeeper](screenshots/gatekeeper-blocking-privileged-pod.png) | ![Network](screenshots/network-policies-deployed.png) |
 
+| GKE Cluster Details | RBAC Least-Privilege Audit |
+|---|---|
+| ![GKE Details](screenshots/gke-cluster-details.png) | ![RBAC](screenshots/rbac-least-privilege.png) |
+
+| Falco — GKE Kernel Limitation |
+|---|
+| ![Falco](screenshots/falco-gke-kernel-error.png) |
+
 ---
 
 ## ✅ Features
@@ -45,7 +53,7 @@
 - 🛡️ Policy-as-code enforcement with **OPA Gatekeeper** — blocks privileged pods and root containers
 - 🌐 **Network Policies** — least-privilege pod-to-pod traffic control
 - 👤 **RBAC Audit** — full export and review of all roles and bindings across namespaces
-- 🚨 **Falco** custom detection rules — shell spawning, sensitive file access, privilege escalation
+- 🚨 **Falco** custom detection rules authored — shell spawning, sensitive file access, privilege escalation *(see Notes on Falco — eBPF probe did not attach on GKE's hardened kernel)*
 - 📦 SBOM generation and SARIF reporting for supply chain visibility
 
 ---
@@ -121,9 +129,15 @@ graph TD
 
 ---
 
+## 📄 RBAC Audit Note
+
+`policies/rbac/rbac-audit.yaml` is the full cluster RBAC export including GKE system roles. For the custom least-privilege role designed for the trading app, see `policies/rbac/proper-rbac.yaml` — this defines `trading-app-role` with minimal permissions scoped to the `trading-app` namespace.
+
+---
+
 ## ⚠️ Notes on Falco
 
-Falco was deployed via Helm using the `modern_ebpf` driver. GKE's hardened Chromium OS kernel (v6.12.55+) prevented the eBPF probe from attaching. Falco pods ran but syscall monitoring did not initialise — this is a known GKE limitation. Custom rules were authored and are in `policies/`. Production fix: dedicated node pool with a supported kernel, or native GKE Threat Detection.
+Falco was deployed via Helm using the `modern_ebpf` driver. GKE's hardened Chromium OS kernel (v6.12.55+) prevented the eBPF probe from attaching. Falco pods ran but syscall monitoring did not initialise — this is a known GKE limitation. Custom rules were authored and are in `policies/custom-falco-rules.yaml`. The `evidence/falco-alerts.txt` file documents this limitation directly. Production fix: dedicated node pool with a supported kernel, or native GKE Threat Detection.
 
 ---
 
