@@ -64,6 +64,7 @@
 git clone https://github.com/AurelienKumarathas/k8s-security-portfolio.git
 cd k8s-security-portfolio
 trivy image nginx:1.14.0
+kubectl apply -f manifests-insecure/namespace.yaml
 kubectl apply -f policies/gatekeeper/
 kubectl apply -f policies/network-policies/
 kubectl apply -f policies/rbac/
@@ -89,7 +90,7 @@ k8s-security-portfolio/
 ├── manifests-insecure/    # Intentionally vulnerable manifests for policy testing
 ├── policies/              # Gatekeeper, network policies, RBAC, Falco rules
 ├── screenshots/           # GCP Console and CLI evidence
-└── gatekeeper-library/    # OPA Gatekeeper constraint templates
+└── gatekeeper-library/    # OPA Gatekeeper reference templates (see gatekeeper-library/README.md)
     ├── block-privileged-pods/
     └── require-resource-limits/
 ```
@@ -132,6 +133,8 @@ graph TD
 ## 📄 RBAC Audit Note
 
 `policies/rbac/rbac-audit.yaml` is the full cluster RBAC export including GKE system roles. For the custom least-privilege role designed for the trading app, see `policies/rbac/proper-rbac.yaml` — this defines `trading-app-role` with minimal permissions scoped to the `trading-app` namespace.
+
+The `cluster-admin` binding visible in the audit export is for the personal Google account used during initial cluster setup only. In a production environment this would be replaced by Workload Identity with narrowly scoped IAM roles — permanent cluster-admin bindings for human users are not acceptable in production.
 
 ---
 
