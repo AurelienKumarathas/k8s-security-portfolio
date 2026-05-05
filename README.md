@@ -25,6 +25,8 @@
 | Runtime threat detection | ❌ None | ✅ Falco rules authored |
 | Container image CVEs (nginx:1.14.0) | **39 CRITICAL** | ✅ Flagged and documented |
 
+> **CIS Benchmark note:** Non-compliance figures were assessed manually against CIS Kubernetes Benchmark v1.8 controls. kube-bench native GKE support is limited; controls were evaluated against GKE's hardening guide and the relevant CIS benchmark sections directly.
+
 ---
 
 ## 📸 Screenshots
@@ -135,6 +137,12 @@ graph TD
 `policies/rbac/rbac-audit.yaml` is the full cluster RBAC export including GKE system roles. For the custom least-privilege role designed for the trading app, see `policies/rbac/proper-rbac.yaml` — this defines `trading-app-role` with minimal permissions scoped to the `trading-app` namespace.
 
 The `cluster-admin` binding visible in the audit export is for the personal Google account used during initial cluster setup only. In a production environment this would be replaced by Workload Identity with narrowly scoped IAM roles — permanent cluster-admin bindings for human users are not acceptable in production.
+
+---
+
+## 📄 Known Constraint Behaviour
+
+The `K8sRequireLimits` constraint in `policies/gatekeeper/gatekeeper-constraints.yaml` shows 6 active violations, all in `gmp-system` and `gke-managed-cim` — GKE's own managed Prometheus and monitoring namespaces whose pods are deployed without CPU limits by Google. These namespaces are outside user control and would be added to the `excludedNamespaces` list in a production hardening pass alongside `kube-system` and `gatekeeper-system`. The `K8sDenyPrivileged` constraint shows `totalViolations: 0` — no privileged containers are running in user namespaces.
 
 ---
 
