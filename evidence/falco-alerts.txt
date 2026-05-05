@@ -1,0 +1,13 @@
+# Falco Alerts — Not Captured
+#
+# Falco was deployed via Helm (modern_ebpf driver) but GKE's hardened
+# Chromium OS kernel (v6.12.55+) prevented the eBPF probe from attaching.
+# Syscall monitoring did not initialise — this is a known GKE limitation.
+#
+# Custom detection rules are authored and available in:
+#   policies/custom-falco-rules.yaml
+#
+# Production fix: dedicated node pool with a supported kernel,
+# or use native GKE Threat Detection instead of Falco.
+#
+# See README.md > Notes on Falco for full context.
