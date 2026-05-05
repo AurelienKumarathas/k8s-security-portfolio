@@ -29,7 +29,13 @@ jobs:
 
       - name: Validate manifests
         run: |
-          find policies/ manifests-insecure/ -name '*.yaml' -o -name '*.yml' 2>/dev/null | while read f; do
-            kubectl apply --dry-run=client -f "$f" 2>/dev/null || echo "::warning::Skipped $f (requires cluster context)"
+          # Note: kubectl apply --dry-run=client validates syntax and native K8s schema only.
+          # Gatekeeper CRDs (ConstraintTemplate, K8sDenyPrivileged, K8sRequireLimits) require
+          # --dry-run=server against a cluster with Gatekeeper installed for full validation.
+          # Client-side dry-run for CRD manifests confirms YAML is parseable but not schema-valid.
+          # For full shift-left security scanning (Checkov, kubesec), see the companion repo:
+          # https://github.com/AurelienKumarathas/terraform-devsecops-pipeline
+          find policies/ manifests-insecure/ -name '*.yaml' -o -name '*.yml' | while read f; do
+            kubectl apply --dry-run=client -f "$f" 2>&1 | grep -v '^Warning' || echo "::warning::Skipped $f (requires cluster context or Gatekeeper CRD)"
           done
           echo "Validation complete."

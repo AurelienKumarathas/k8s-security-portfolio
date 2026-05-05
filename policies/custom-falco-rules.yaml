@@ -1,5 +1,10 @@
 # custom-falco-rules.yaml
 # Custom detection rules for CloudNative Finance
+#
+# IMPORTANT: These rules extend Falco's default ruleset and require the default
+# falco_rules.yaml to be loaded first. Macros used below (open_read,
+# spawned_process, container, outbound) are defined in the Falco default ruleset.
+# Load order: falco_rules.yaml -> custom-falco-rules.yaml
 
 # Rule 1: Detect database credential access
 - rule: Database Credential File Access

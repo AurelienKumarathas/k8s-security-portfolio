@@ -1,0 +1,11 @@
+# namespace.yaml
+# Creates the vulnerable-apps namespace used by the insecure manifests.
+# This namespace is intentionally used to isolate security-testing workloads
+# from production namespaces.
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: vulnerable-apps
+  labels:
+    purpose: security-testing
+    environment: lab
